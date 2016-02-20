@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- arguments to pass to launch file -->
+    <arg name="robot_name" value="labset" />
+    <arg name="pathtodataset" default="/mnt/work/Research/DataBases/Vision/labdatabase/" />
+    <arg name="camframe" default="camframe" />
+    <arg name="seqno" default="6" />
+    <arg name="campoints" default="/campoints" />
+    <arg name="stereo" default="stereo" />
+    <arg name="odom" default="/odom" />   
+    <arg name="base_frame" default="base_link" />
+    <arg name="world_frame" default="odom" />
+    <arg name="spkf_optim" default="true" />
+    <arg name="ransac_enable" default="true" />
+    <arg name="namespace" value="$(arg robot_name)" />
+    <arg name="rviz_config" default="$(find RiseStereoOdom)/cfg/lab_offline.rviz" />  
+    <node name="kitti_images" pkg="RiseStereoOdom" type="publishdataset" ns="$(arg namespace)" output="log">
+        <param name="path" value="$(arg pathtodataset)" type="str" />
+        <param name="camframe" value="$(arg robot_name)/$(arg camframe)" type="str" />
+        <param name="sequence" value="$(arg seqno)" type="int" />
+        <param name="kitti" value="false" type="bool" />
+        <param name="scale" value="1.0" type="double" />
+        <param name="approx_delay" value="0.1" type="double" />
+        <remap from="stereo" to="/$(arg namespace)/stereo" />
+    </node>
+    <node name="campoints" pkg="RiseStereoOdom" type="publishcampoints" output="log">
+        <remap from="campoints" to="$(arg campoints)" />
+        <remap from="stereo" to="$(arg robot_name)/$(arg stereo)" />
+        <param name="keypts_fast_threshold" value="4" type="double" />
+        <param name="keypts_bucket_window" value="240" type="int" />
+        <param name="keypts_maxpts" value="4000" type="int" />
+        <param name="match_lowe" value="0.85" type="double" />
+        <param name="match_yerr" value="5" type="int"/>
+        <param name="match_xmax" value="96" type="int"/>
+        <param name="freak_threshold" value="48" type="int" />
+        <param name="cutoff_disparity" value="2" type="int" />
+    </node>
+    <node name="stereoodom" pkg="RiseStereoOdom" type="stereoodom" output="log">
+        <remap from="campoints" to="$(arg campoints)" />
+        <remap from="odom" to="$(arg odom)" />
+                       
+        <param name="nframes" value="3" type="int" />     
+        <param name="spkf_optim" value="$(arg spkf_optim)" type="bool" /> 
+        <param name="ransac_enable" value="$(arg ransac_enable)" type="bool" />        
+        <!-- Base to Camera Transforms -->
+        <param name="base2cam_x" value="0.1525" type="double" />
+        <param name="base2cam_y" value="0.03922" type="double" />
+        <param name="base2cam_z" value="0.62995" type="double" />
+        <param name="base2cam_angx" value="-1.57079632679" type="double" />
+        <param name="base2cam_angy" value="0." type="double" />
+        <param name="base2cam_angz" value="-1.57079632679" type="double" />
+        <param name="camframe" value="$(arg robot_name)/camframe" type="str" />
+        <param name="baseframe" value="$(arg robot_name)/$(arg base_frame)" type="str" />
+        <param name="worldframe" value="$(arg world_frame)" type="str" />
+        <!-- Motion Model Params -->
+        <param name="spkf_alpha" value="0.005" type="double" />
+        <param name="spkf_beta" value="2.0" type="double" />
+        <param name="spkf_k" value="0.0" type="double" />
+        <param name="spkf_cov_Q_pos" value="1E-9" type="double" />
+        <param name="spkf_cov_Q_ang" value="1E-9" type="double" />
+        <param name="spkf_cov_Q_axis" value="1E-9" type="double" />
+        <param name="spkf_cov_Q_vellin" value="1E-9" type="double" />
+        <param name="spkf_cov_Q_velang" value="1E-9" type="double" />
+        <param name="spkf_cov_R_vellin" value="1E-10" type="double" />
+        <param name="spkf_cov_R_velang" value="1E-10" type="double" />        
+        <!-- Search Params -->
+        <param name="match_lowe" value="0.65" type="double" />
+        <param name="match_radius" value="400" type="double" />
+        <param name="freak_threshold" value="128" type="int" />
+        <param name="ransac_confidence" value="0.995" type="double" />
+        <param name="ransac_outliers" value="0.8" type="double" /> 
+        <param name="ransac_reprojerror" value="4.0" type="double" />
+        <!-- Save File -->
+        <param name="save_enable" value="false" type="bool" />
+        <param name="save_pose" value="processed_files.txt" type="str" />       
+    </node>
+    <include file="$(find riserobotdb)/launch/real/p3at_mobileranger.launch" ns="$(arg robot_name)">
+		<arg name="rviz_config" value="$(arg rviz_config)" />
+		<arg name="robot_name" value="$(arg robot_name)" />
+	</include> 
+</launch>

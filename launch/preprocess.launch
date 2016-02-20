@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- arguments to pass to launch file , for pre-processing images from stereo camera-->
+    <arg name="campoints" default="/campoints" />
+    <arg name="stereo" default="/stereo" />
+    <node name="campoints" pkg="RiseStereoOdom" type="publishcampoints" output="screen">
+        <remap from="campoints" to="$(arg campoints)" />
+        <remap from="stereo" to="$(arg stereo)" />
+        <param name="keypts_fast_threshold" value="7" type="double" />
+        <param name="keypts_bucket_window" value="240" type="int" />
+        <param name="keypts_maxpts" value="2000" type="int" />
+        <param name="match_lowe" value="0.75" type="double" />
+        <param name="match_yerr" value="3" type="int"/>
+        <param name="match_xmax" value="96" type="int"/>
+        <param name="freak_threshold" value="48" type="int" />
+        <param name="cutoff_disparity" value="3" type="int" />
+    </node>
+</launch>

@@ -1,0 +1,20 @@
+<package>
+  <description brief="RiseStereoOdom">
+     RiseStereoOdom, ROS Node for RISE Visual Stereo Odometry algorithm
+  </description>
+  <author>usama</author>
+  <license>Apache</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/RiseStereoOdom</url>
+  <depend package="roscpp"/>
+  <depend package="cv_bridge"/>
+  <depend package="sensor_msgs"/>
+  <depend package="stereo_msgs"/>
+  <depend package="image_transport"/>
+  <depend package="tf" />
+  <export>
+     <cpp cflags="-I${prefix}/msg_gen/cpp/include"/>
+  </export>
+</package>
+
+

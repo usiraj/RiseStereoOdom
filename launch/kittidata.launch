@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- arguments to pass to launch file -->
+    <arg name="pathtodataset" default="/mnt/work/Research/DataBases/Vision/Kitti/dataset/" />
+    <arg name="camframe" default="camframe" />
+    <arg name="seqno" default="4" />
+    <arg name="campoints" default="campoints" />
+    <arg name="namespace" default="kittiset" />
+    <arg name="robot_name" default="kittiset" />
+    <node name="kitti_images" pkg="RiseStereoOdom" type="publishdataset" ns="$(arg namespace)" output="screen">
+        <param name="path" value="$(arg pathtodataset)" type="str" />
+        <param name="camframe" value="$(arg camframe)" type="str" />
+        <param name="camframe" value="$(arg robot_name)/$(arg camframe)" type="str" />
+        <param name="sequence" value="$(arg seqno)" type="int" />
+        <param name="kitti" value="true" type="bool" />
+        <param name="scale" value="1.0" type="double" />
+        <param name="approx_delay" value="0.1" type="double" />
+        <remap from="stereo" to="/$(arg namespace)/stereo" />
+    </node>
+</launch>

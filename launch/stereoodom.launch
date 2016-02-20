@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="robot_name" value="dummy" />
+    <arg name="odom" default="/odom" />
+    <arg name="campoints" default="/labset/campoints" />    
+    <arg name="base_frame" default="base_link" />
+    <arg name="world_frame" default="/world" />
+    <arg name="spkf_optim" default="true" />
+    <arg name="ransac_enable" default="true" />
+    <!-- arguments to pass to launch file , for pre-processing images from stereo camera-->
+    <arg name="campoints" default="/campoints" />
+    <node name="stereoodom" pkg="RiseStereoOdom" type="stereoodom" output="screen">
+        <remap from="campoints" to="$(arg campoints)" />
+        <remap from="odom" to="$(arg odom)" />
+                       
+        <param name="nframes" value="3" type="int" />     
+        <param name="spkf_optim" value="$(arg spkf_optim)" type="bool" /> 
+        <param name="ransac_enable" value="$(arg ransac_enable)" type="bool" />        
+        <!-- Base to Camera Transforms -->
+        <param name="base2cam_x" value="0.0" type="double" />
+        <param name="base2cam_y" value="0.0" type="double" />
+        <param name="base2cam_z" value="0.0" type="double" />
+        <param name="base2cam_angx" value="-1.57079632679" type="double" />
+        <param name="base2cam_angy" value="0." type="double" />
+        <param name="base2cam_angz" value="-1.57079632679" type="double" />
+        <param name="camframe" value="$(arg robot_name)/camframe" type="str" />
+        <param name="baseframe" value="$(arg robot_name)/$(arg base_frame)" type="str" />
+        <param name="worldframe" value="$(arg world_frame)" type="str" />
+        <!-- Motion Model Params -->
+        <param name="spkf_alpha" value="0.01" type="double" />
+        <param name="spkf_beta" value="2.0" type="double" />
+        <param name="spkf_k" value="0.0" type="double" />
+        <param name="spkf_cov_Q_pos" value="1E-4" type="double" />
+        <param name="spkf_cov_Q_ang" value="1E-5" type="double" />
+        <param name="spkf_cov_Q_axis" value="1E-4" type="double" />
+        <param name="spkf_cov_Q_vellin" value="1E-4" type="double" />
+        <param name="spkf_cov_Q_velang" value="1E-5" type="double" />
+        <param name="spkf_cov_R_vellin" value="1E-3" type="double" />
+        <param name="spkf_cov_R_velang" value="1E-6" type="double" />        
+        <!-- Search Params -->
+        <param name="match_lowe" value="0.9" type="double" />
+        <param name="match_radius" value="90" type="double" />
+        <param name="freak_threshold" value="64" type="int" />
+        <param name="ransac_confidence" value="0.995" type="double" />
+        <param name="ransac_outliers" value="0.8" type="double" /> 
+        <param name="ransac_reprojerror" value="2.0" type="double" />
+        <!-- Save File -->
+        <param name="save_enable" value="false" type="bool" />
+        <param name="save_pose" value="processed_files.txt" type="str" />       
+    </node>
+</launch>
